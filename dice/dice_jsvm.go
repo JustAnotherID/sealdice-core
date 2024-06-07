@@ -624,7 +624,9 @@ func (d *Dice) jsClear() {
 	// 清理规则模板
 	d.GameSystemMap = &SyncMap[string, *GameSystemTemplate]{}
 	d.RegisterBuiltinSystemTemplate()
-	// 关闭js vm
+	// 清理已安装列表
+	d.InstalledJsScripts = map[string]bool{}
+	// 关闭js
 	if d.JsLoop != nil {
 		d.JsLoop.Stop()
 		d.JsLoop = nil
@@ -684,6 +686,9 @@ func (d *Dice) JsLoadScripts() {
 					return nil
 				}
 				jsInfos = append(jsInfos, jsInfo)
+				if len(jsInfo.StoreID) > 0 {
+					d.InstalledJsScripts[jsInfo.StoreID] = true
+				}
 			} else {
 				d.Logger.Warnf("内置脚本「%s」校验未通过，拒绝加载", path)
 			}
@@ -709,6 +714,9 @@ func (d *Dice) JsLoadScripts() {
 				return nil
 			}
 			jsInfos = append(jsInfos, jsInfo)
+			if len(jsInfo.StoreID) > 0 {
+				d.InstalledJsScripts[jsInfo.StoreID] = true
+			}
 		}
 		return nil
 	})
@@ -870,6 +878,8 @@ type JsScriptInfo struct {
 	Depends []JsScriptDepends `json:"depends"`
 	/** 需要被编译 */
 	needCompiled bool
+	/** 扩展商店唯一 ID */
+	StoreID string `json:"storeID"`
 }
 
 type JsScriptDepends struct {
@@ -990,6 +1000,8 @@ func (d *Dice) JsParseMeta(s string, installTime time.Time, rawData []byte, buil
 				}
 			case "needCompiled":
 				jsInfo.needCompiled = true
+			case "storeID":
+				jsInfo.StoreID = v
 			}
 		}
 		jsInfo.UpdateUrls = updateUrls
