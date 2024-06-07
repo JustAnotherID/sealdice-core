@@ -254,6 +254,11 @@ type Dice struct {
 	// 用于检查是否需要插入到数据库的哈希表 150因为没有对应插入 到时候这个就没用了
 	SaveDatabaseInsertCheckMapFlag sync.Once                `json:"-" yaml:"-"`
 	SaveDatabaseInsertCheckMap     *SyncMap[string, string] `json:"-" yaml:"-"`
+
+	/* 已安装的商店扩展。记录各扩展读取时识别到的商店ID，用于扩展商店判断是否已安装对应扩展（用 map 代替 set） */
+	InstalledJsScripts map[string]bool `yaml:"-" json:"-"`
+	InstalledDecks     map[string]bool `yaml:"-" json:"-"`
+	InstalledReplies   map[string]bool `yaml:"-" json:"-"`
 }
 
 type CensorMode int
@@ -315,6 +320,9 @@ func (d *Dice) Init() {
 	d.Cron.Start()
 
 	d.CocExtraRules = map[int]*CocRuleInfo{}
+	d.InstalledJsScripts = map[string]bool{}
+	d.InstalledDecks = map[string]bool{}
+	d.InstalledReplies = map[string]bool{}
 
 	var err error
 	d.DBData, d.DBLogs, err = model.SQLiteDBInit(d.BaseConfig.DataDir)
