@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -572,4 +573,29 @@ func UnpackGroupUserId(id string) (groupIdPart, userIdPart string, ok bool) {
 	}
 
 	return "", "", false
+}
+
+func (d *Dice) getTargetVmEngineVersion(targetType string) string {
+	fn := func(typeVersion string) string {
+		g, _ := strconv.Atoi(d.VMVersionGlobal[1:])
+		t, _ := strconv.Atoi(typeVersion[1:])
+		if t > g {
+			return typeVersion
+		}
+		return d.VMVersionGlobal
+	}
+	switch targetType {
+	case "reply":
+		return fn(d.VMVersionForReply)
+	case "deck":
+		return fn(d.VMVersionForDeck)
+	case "custom-text":
+		return fn(d.VMVersionForCustomText)
+	case "msg":
+		return fn(d.VMVersionForMsg)
+	case "global":
+		fallthrough
+	default:
+		return fn(d.VMVersionGlobal)
+	}
 }

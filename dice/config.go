@@ -2126,15 +2126,26 @@ func (d *Dice) loads() {
 		d.CensorMatchPinyin = dNew.CensorMatchPinyin
 		d.CensorFilterRegexStr = dNew.CensorFilterRegexStr
 
+		d.VMVersionGlobal = dNew.VMVersionGlobal
 		d.VMVersionForDeck = dNew.VMVersionForDeck
 		d.VMVersionForReply = dNew.VMVersionForReply
+		d.VMVersionForCustomText = dNew.VMVersionForCustomText
+		d.VMVersionForMsg = dNew.VMVersionForMsg
 
-		if d.VMVersionForDeck == "" {
-			d.VMVersionForDeck = "v2"
+		if d.VMVersionGlobal == "" {
+			d.VMVersionGlobal = "v1"
 		}
-
+		if d.VMVersionForDeck == "" {
+			d.VMVersionForDeck = "v1"
+		}
 		if d.VMVersionForReply == "" {
 			d.VMVersionForReply = "v1"
+		}
+		if d.VMVersionForCustomText == "" {
+			d.VMVersionForCustomText = "v1"
+		}
+		if d.VMVersionForMsg == "" {
+			d.VMVersionForMsg = "v1"
 		}
 
 		if dNew.BanList != nil {

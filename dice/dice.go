@@ -248,8 +248,11 @@ type Dice struct {
 	CensorMatchPinyin    bool                   `json:"censorMatchPinyin" yaml:"censorMatchPinyin"`       // 敏感词匹配拼音
 	CensorFilterRegexStr string                 `json:"censorFilterRegexStr" yaml:"censorFilterRegexStr"` // 敏感词过滤字符正则
 
-	VMVersionForReply string `json:"VMVersionForReply" yaml:"VMVersionForReply"` // 自定义回复使用的vm版本
-	VMVersionForDeck  string `json:"VMVersionForDeck" yaml:"VMVersionForDeck"`   // 牌堆使用的vm版本
+	VMVersionGlobal        string `json:"VMVersionGlobal" yaml:"VMVersionGlobal"`               // 全局vm版本，其他独立开关的版本高于该项控制的版本时覆盖
+	VMVersionForReply      string `json:"VMVersionForReply" yaml:"VMVersionForReply"`           // 自定义回复使用的vm版本
+	VMVersionForDeck       string `json:"VMVersionForDeck" yaml:"VMVersionForDeck"`             // 牌堆使用的vm版本
+	VMVersionForCustomText string `json:"VMVersionForCustomText" yaml:"VMVersionForCustomText"` // 自定义文案使用的vm版本
+	VMVersionForMsg        string `json:"VMVersionForMsg" yaml:"VMVersionForMsg"`               // 消息里使用的vm版本，也包括可能的一些边角类型的执行选择
 
 	AttrsManager *AttrsManager `json:"-" yaml:"-"`
 

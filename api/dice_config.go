@@ -546,7 +546,7 @@ func DiceMailTest(c echo.Context) error {
 	return Success(&c, Response{})
 }
 
-func vmVersionForExtSetBase(c echo.Context, callback func(val string)) error {
+func vmVersionSet(c echo.Context) error {
 	if !doAuth(c) {
 		return c.JSON(http.StatusForbidden, nil)
 	}
@@ -555,6 +555,7 @@ func vmVersionForExtSetBase(c echo.Context, callback func(val string)) error {
 	}
 
 	var data struct {
+		Type  string `json:"type"`
 		Value string `json:"value"`
 	}
 
@@ -563,20 +564,19 @@ func vmVersionForExtSetBase(c echo.Context, callback func(val string)) error {
 		return Error(&c, err.Error(), nil)
 	}
 
-	callback(data.Value)
+	switch data.Type {
+	case "reply":
+		myDice.VMVersionForReply = data.Value
+	case "deck":
+		myDice.VMVersionForDeck = data.Value
+	case "custom-text":
+		myDice.VMVersionForCustomText = data.Value
+	case "global":
+		myDice.VMVersionGlobal = data.Value
+	default:
+		return Error(&c, "不支持设置vm版本的类型 "+data.Type, Response{})
+	}
 	myDice.MarkModified()
 	myDice.Parent.Save()
 	return Success(&c, Response{})
-}
-
-func vmVersionForReplySet(c echo.Context) error {
-	return vmVersionForExtSetBase(c, func(val string) {
-		myDice.VMVersionForReply = val
-	})
-}
-
-func vmVersionForDeckSet(c echo.Context) error {
-	return vmVersionForExtSetBase(c, func(val string) {
-		myDice.VMVersionForDeck = val
-	})
 }
